@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * CSP Architect — Browser Security Header Workbench
+ * CSP Architect - Browser Security Header Workbench
  * Frontend Application Controller (Vanilla ES6+)
  * Owner: Fasih Ur Rehman (Layer 1 Browser Interface)
  */
@@ -44,7 +44,7 @@
   }
 
   function formatTimestamp(isoString) {
-    if (!isoString) return '—';
+    if (!isoString) return ' - ';
     try {
       const d = new Date(isoString);
       if (Number.isNaN(d.getTime())) return String(isoString);
@@ -355,7 +355,7 @@
     $('active-run-latency-label').textContent =
       state.activeLatencyMs !== null && state.activeLatencyMs !== undefined
         ? `${state.activeLatencyMs} ms`
-        : '—';
+        : ' - ';
   }
 
   function getBuilderOptions() {
@@ -445,7 +445,7 @@
     $('s1-inline-scripts').textContent = '0';
     $('s1-event-handlers').textContent = '0';
     $('s1-eval-sinks').textContent = 'Blocked at Allowlist Gate';
-    $('stage1-raw-headers').textContent = `Request aborted before network socket connection.\nReason: ${err.code || 'ERR_ALLOWLIST_DENIED'} — ${err.message}`;
+    $('stage1-raw-headers').textContent = `Request aborted before network socket connection.\nReason: ${err.code || 'ERR_ALLOWLIST_DENIED'} - ${err.message}`;
 
     const evList = $('stage1-evidence-list');
     evList.innerHTML = `
@@ -501,7 +501,7 @@
     const dangerousSinks = res.dangerousSinks || res.xssSinks || [];
 
     $('s1-http-status').textContent = `${crawl.httpStatus || 200} OK`;
-    $('s1-origin').textContent = crawl.normalizedOrigin || crawl.targetUrl || '—';
+    $('s1-origin').textContent = crawl.normalizedOrigin || crawl.targetUrl || ' - ';
     $('s1-ext-scripts').textContent = String(extScripts.length);
     $('s1-inline-scripts').textContent = String(inlineScripts.length);
     $('s1-event-handlers').textContent = String(handlers.length);
@@ -528,7 +528,7 @@
           <td><span class="badge ${unsafe ? 'badge-danger' : 'badge-warning'}">Inline Script #${escapeHtml(s.index ?? 0)}</span></td>
           <td class="code-text">${escapeHtml(s.preview || s.code || '(inline script)')}</td>
           <td class="code-text">
-            ${s.sha256 ? `'${escapeHtml(s.sha256)}'` : '—'}
+            ${s.sha256 ? `'${escapeHtml(s.sha256)}'` : ' - '}
             ${unsafe ? ' <span class="badge badge-danger">UNSAFE SINK</span>' : ' <span class="badge badge-success">HASHABLE</span>'}
           </td>
         </tr>
@@ -539,7 +539,7 @@
         <tr>
           <td><span class="badge badge-neutral">Inline Style #${escapeHtml(st.index ?? 0)}</span></td>
           <td class="code-text">${escapeHtml(st.preview || '(inline style block)')}</td>
-          <td class="code-text">${st.sha256 ? `'${escapeHtml(st.sha256)}'` : '—'}</td>
+          <td class="code-text">${st.sha256 ? `'${escapeHtml(st.sha256)}'` : ' - '}</td>
         </tr>
       `);
     }
@@ -707,7 +707,7 @@
                     <div>${escapeHtml(f.reason || '')}</div>
                     <code style="font-size:11px;color:var(--text-muted);">${escapeHtml(f.evidence || '')}</code>
                   </td>
-                  <td>${escapeHtml(f.remediation || '—')}</td>
+                  <td>${escapeHtml(f.remediation || ' - ')}</td>
                 </tr>
               `;
             })
@@ -802,7 +802,7 @@
                 <tr>
                   <td class="code-text"><span class="badge badge-info">${escapeHtml(d.directive || 'policy')}</span></td>
                   <td>${escapeHtml(d.decision || '')}</td>
-                  <td class="code-text">${escapeHtml(d.evidence || '—')}</td>
+                  <td class="code-text">${escapeHtml(d.evidence || ' - ')}</td>
                 </tr>
               `
             )
@@ -814,7 +814,7 @@
   async function runStage4Only(opts = {}) {
     if (!state.stages.crawlResult || !state.stages.cspBuild) {
       if (!opts.silentToast) {
-        showToast('Run Stages 1–3 or Full Pipeline first.', 'warning');
+        showToast('Run Stages 1-3 or Full Pipeline first.', 'warning');
       }
       return;
     }
@@ -873,13 +873,13 @@
                   <td class="code-text">${escapeHtml(v.effectiveDirective || v.violatedDirective || 'script-src')}</td>
                   <td class="code-text">${escapeHtml(v.blockedUri || v.blocked_uri || 'inline')}</td>
                   <td><span class="badge badge-danger">${escapeHtml(v.disposition || 'enforce')}</span></td>
-                  <td class="code-text">${escapeHtml(v.sample || '—')}</td>
+                  <td class="code-text">${escapeHtml(v.sample || ' - ')}</td>
                   <td>${escapeHtml(v.explanation || 'Blocked by synthesized least-privilege Content-Security-Policy.')}</td>
                 </tr>
               `;
             })
             .join('')
-        : '<tr><td colspan="7" class="empty-cell">0 policy violations detected — all page resources comply with the synthesized CSP.</td></tr>';
+        : '<tr><td colspan="7" class="empty-cell">0 policy violations detected - all page resources comply with the synthesized CSP.</td></tr>';
   }
 
   function launchLiveBrowserSandbox() {
@@ -960,7 +960,7 @@
   async function runStage5Only(opts = {}) {
     if (!state.stages.crawlResult || !state.stages.headerAnalysis || !state.stages.cspBuild) {
       if (!opts.silentToast) {
-        showToast('Run Stages 1–3 first to calculate Before/After score.', 'warning');
+        showToast('Run Stages 1-3 first to calculate Before/After score.', 'warning');
       }
       return;
     }
@@ -1071,7 +1071,7 @@
   async function runStage6Only(opts = {}) {
     if (!state.stages.cspBuild) {
       if (!opts.silentToast) {
-        showToast('Run Stages 1–5 first to generate the export bundle.', 'warning');
+        showToast('Run Stages 1-5 first to generate the export bundle.', 'warning');
       }
       return;
     }
@@ -1190,13 +1190,13 @@
   }
 
   /* ========================================================================
-     TAB 2: MANDATORY EVALUATION SUITE (T1 – T6)
+     TAB 2: MANDATORY EVALUATION SUITE (T1 - T6)
      ======================================================================== */
   async function runEvaluationSuite() {
     hideGlobalAlert();
     const btn = $('run-eval-suite-btn');
     btn.disabled = true;
-    btn.textContent = 'Running Mandatory Evaluation Suite (T1–T6)...';
+    btn.textContent = 'Running Mandatory Evaluation Suite (T1-T6)...';
 
     try {
       const data = await apiRequest('/api/engine/evaluate-suite', {
@@ -1204,12 +1204,12 @@
         body: {},
       });
       renderEvaluationSuite(data);
-      showToast('Mandatory Evaluation Suite (Baseline + T1–T6) completed.', 'success');
+      showToast('Mandatory Evaluation Suite (Baseline + T1-T6) completed.', 'success');
     } catch (_err) {
       // Alert handled by apiRequest
     } finally {
       btn.disabled = false;
-      btn.textContent = 'Run Mandatory Evaluation Suite (T1–T6)';
+      btn.textContent = 'Run Mandatory Evaluation Suite (T1-T6)';
     }
   }
 
@@ -1232,7 +1232,7 @@
     $('eval-kpi-coverage').textContent = `${metrics.ruleCoveragePct ?? metrics.ruleCoverage ?? 100}%`;
     $('eval-kpi-fpr').textContent = `${metrics.falsePositiveRatePct ?? metrics.falsePositiveRate ?? 0}%`;
     $('eval-kpi-fnr').textContent = `${metrics.falseNegativeRatePct ?? metrics.falseNegativeRate ?? 0}%`;
-    $('eval-kpi-latency').textContent = `${metrics.meanLatencyMs ?? metrics.avgLatencyMs ?? '—'} ms`;
+    $('eval-kpi-latency').textContent = `${metrics.meanLatencyMs ?? metrics.avgLatencyMs ?? ' - '} ms`;
 
     $('eval-results-tbody').innerHTML =
       cases.length > 0
@@ -1429,8 +1429,8 @@
     const rB = cmp.runB || {};
     const sDelta = cmp.scoreDelta || {};
 
-    $('cmp-run-a-scores').textContent = `${rA.beforeScore ?? 0} -> ${rA.afterScore ?? 0} (${rA.afterGrade || '—'})`;
-    $('cmp-run-b-scores').textContent = `${rB.beforeScore ?? 0} -> ${rB.afterScore ?? 0} (${rB.afterGrade || '—'})`;
+    $('cmp-run-a-scores').textContent = `${rA.beforeScore ?? 0} -> ${rA.afterScore ?? 0} (${rA.afterGrade || ' - '})`;
+    $('cmp-run-b-scores').textContent = `${rB.beforeScore ?? 0} -> ${rB.afterScore ?? 0} (${rB.afterGrade || ' - '})`;
 
     const afterDiff = Number(sDelta.afterScoreDiff ?? 0);
     $('cmp-after-diff').textContent = `${afterDiff >= 0 ? '+' : ''}${afterDiff} pts`;
@@ -1753,7 +1753,7 @@
     });
 
     $('target-url-input')?.addEventListener('input', (e) => {
-      $('header-active-target').textContent = e.target.value.trim() || '—';
+      $('header-active-target').textContent = e.target.value.trim() || ' - ';
     });
 
     // Workbench Execution Buttons

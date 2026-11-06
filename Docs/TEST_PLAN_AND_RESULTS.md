@@ -1,6 +1,6 @@
 # Test Plan, Evaluation Matrix & Quantitative Results
 
-**Project:** Proposal 38 — CSP Architect: Browser Security Header Workbench  
+**Project:** Proposal 38 - CSP Architect: Browser Security Header Workbench  
 **Course / Group:** Class 3, Group 6 | **Domain:** Web Security  
 **QA & Automation Lead:** Tayyab Khalid
 
@@ -8,7 +8,7 @@
 
 ## 1. Testing Strategy & Scope
 
-Our verification framework validates both functional accuracy across the 6-stage security engine (`FR-1` through `FR-6`) and adversarial resilience across authentication, RBAC, CSRF, SSRF/allowlist enforcement, input validation, rate limiting, and SQLite persistence (`T1`–`T6` and `T-final`).
+Our verification framework validates both functional accuracy across the 6-stage security engine (`FR-1` through `FR-6`) and adversarial resilience across authentication, RBAC, CSRF, SSRF/allowlist enforcement, input validation, rate limiting, and SQLite persistence (`T1`-`T6` and `T-final`).
 
 ### Test Execution Commands
 ```bash
@@ -21,7 +21,7 @@ npm run eval
 
 ---
 
-## 2. Mandatory Evaluation Matrix (`Baseline` + `T1`–`T6`)
+## 2. Mandatory Evaluation Matrix (`Baseline` + `T1`-`T6`)
 
 Verified by `tests/evaluation_t1_t6.test.js` and `scripts/run_evaluation.js`:
 
@@ -56,12 +56,12 @@ Verified by `tests/security_t_final.test.js`:
 
 ## 4. Quantitative Security & Performance Metrics Summary
 
-Measured across the evaluation corpus (`Baseline` + `T1`–`T6`) via `npm run eval` and `POST /api/engine/evaluate-suite`:
+Measured across the evaluation corpus (`Baseline` + `T1`-`T6`) via `npm run eval` and `POST /api/engine/evaluate-suite`:
 
 | Metric | Target Benchmark | Measured Value | How Computed |
 | :--- | :---: | :---: | :--- |
 | **Rule Coverage (%)** | `100%` | **`100.0%` (`10 / 10` rules)** | `Unique rules evaluated across corpus / Total rules in DEFAULT_RULES (10) * 100` |
 | **False Positive Rate (FPR)** | `0%` | **`0.0%` (`0 / 1` normal fixtures)** | `Unjustified critical/high alerts on hardened normal-safe baseline / Total normal fixtures * 100` |
-| **False Negative Rate (FNR)** | `0%` | **`0.0%` (`0 / 6` adverse fixtures)** | `Missed vulnerabilities or unblocked SSRF targets across T1–T6 / Total adverse cases * 100` |
+| **False Negative Rate (FNR)** | `0%` | **`0.0%` (`0 / 6` adverse fixtures)** | `Missed vulnerabilities or unblocked SSRF targets across T1-T6 / Total adverse cases * 100` |
 | **Mean Decision Latency** | `< 50 ms` | **`~5.4 ms` per full 6-stage run** | High-resolution `process.hrtime.bigint()` elapsed time across `FR-1` through `FR-6` |
 | **Allowlist Rejection Latency** | `< 5 ms` | **`~1.1 ms` pre-fetch rejection** | Time to parse URL, verify allowlist failure, and return `403 ERR_ALLOWLIST_DENIED` |

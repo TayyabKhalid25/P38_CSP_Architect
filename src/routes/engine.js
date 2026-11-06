@@ -3,7 +3,7 @@
 /**
  * Layer 2/3 Bridge: Dedicated Security Engine Express Router (`/api/engine`)
  * Exposes individual stage execution routes (`FR-1` through `FR-6`), the full
- * 6-stage pipeline orchestrator, the mandatory `T1`–`T6` evaluation suite runner,
+ * 6-stage pipeline orchestrator, the mandatory `T1`-`T6` evaluation suite runner,
  * and the W3C browser `csp-report` telemetry collector.
  */
 
@@ -93,7 +93,7 @@ const operatorGuards = [
 ];
 
 /**
- * POST /api/engine/crawl — Stage 1 (FR-1: Local Target Crawler)
+ * POST /api/engine/crawl - Stage 1 (FR-1: Local Target Crawler)
  */
 router.post('/crawl', ...operatorGuards, async (req, res, next) => {
   const systemConfig = loadActiveSystemConfig();
@@ -123,7 +123,7 @@ router.post('/crawl', ...operatorGuards, async (req, res, next) => {
 });
 
 /**
- * POST /api/engine/analyze-headers — Stage 2 (FR-2: Security Header Analyzer)
+ * POST /api/engine/analyze-headers - Stage 2 (FR-2: Security Header Analyzer)
  */
 router.post('/analyze-headers', ...operatorGuards, async (req, res, next) => {
   const systemConfig = loadActiveSystemConfig();
@@ -171,7 +171,7 @@ router.post('/analyze-headers', ...operatorGuards, async (req, res, next) => {
 });
 
 /**
- * POST /api/engine/build-csp — Stage 3 (FR-3: Least-Privilege CSP Synthesizer)
+ * POST /api/engine/build-csp - Stage 3 (FR-3: Least-Privilege CSP Synthesizer)
  */
 router.post('/build-csp', ...operatorGuards, async (req, res, next) => {
   const systemConfig = loadActiveSystemConfig();
@@ -222,7 +222,7 @@ router.post('/build-csp', ...operatorGuards, async (req, res, next) => {
 });
 
 /**
- * POST /api/engine/collect-violations — Stage 4 (FR-4: Policy Violation Simulator)
+ * POST /api/engine/collect-violations - Stage 4 (FR-4: Policy Violation Simulator)
  */
 router.post('/collect-violations', ...operatorGuards, async (req, res, next) => {
   const systemConfig = loadActiveSystemConfig();
@@ -294,7 +294,7 @@ router.post('/collect-violations', ...operatorGuards, async (req, res, next) => 
 });
 
 /**
- * POST /api/engine/score — Stage 5 (FR-5: Before/After Posture Scorer)
+ * POST /api/engine/score - Stage 5 (FR-5: Before/After Posture Scorer)
  */
 router.post('/score', ...operatorGuards, async (req, res, next) => {
   const systemConfig = loadActiveSystemConfig();
@@ -365,7 +365,7 @@ router.post('/score', ...operatorGuards, async (req, res, next) => {
 });
 
 /**
- * POST /api/engine/export — Stage 6 (FR-6: Downloadable Config & Sanitized JSON Bundle)
+ * POST /api/engine/export - Stage 6 (FR-6: Downloadable Config & Sanitized JSON Bundle)
  */
 router.post('/export', ...operatorGuards, async (req, res, next) => {
   const systemConfig = loadActiveSystemConfig();
@@ -446,7 +446,7 @@ router.post('/export', ...operatorGuards, async (req, res, next) => {
 });
 
 /**
- * POST /api/engine/run-pipeline — Full 6-Stage Pipeline Execution (`FR-1` to `FR-6`)
+ * POST /api/engine/run-pipeline - Full 6-Stage Pipeline Execution (`FR-1` to `FR-6`)
  * Persists the completed (or rejected) workflow run and simulated violations to SQLite.
  */
 router.post('/run-pipeline', ...operatorGuards, async (req, res, next) => {
@@ -551,7 +551,7 @@ router.post('/run-pipeline', ...operatorGuards, async (req, res, next) => {
 });
 
 /**
- * POST /api/engine/evaluate-suite — Automated Evaluation Benchmark (`Baseline` + `T1`–`T6`)
+ * POST /api/engine/evaluate-suite - Automated Evaluation Benchmark (`Baseline` + `T1`-`T6`)
  */
 router.post('/evaluate-suite', ...operatorGuards, async (req, res, next) => {
   const systemConfig = loadActiveSystemConfig();
@@ -580,7 +580,7 @@ router.post('/evaluate-suite', ...operatorGuards, async (req, res, next) => {
 });
 
 /**
- * POST /api/engine/csp-report — Public W3C Browser CSP Violation Collector Endpoint
+ * POST /api/engine/csp-report - Public W3C Browser CSP Violation Collector Endpoint
  * Accepts `application/csp-report` or `application/json` sent by browsers when
  * a `Content-Security-Policy` or `Content-Security-Policy-Report-Only` policy with
  * `report-uri /api/engine/csp-report` is violated.
@@ -631,7 +631,7 @@ router.post(
 );
 
 /**
- * GET /api/engine/violations — Lists stored browser and simulated violation reports
+ * GET /api/engine/violations - Lists stored browser and simulated violation reports
  */
 router.get('/violations', requireAuth, (req, res, next) => {
   try {

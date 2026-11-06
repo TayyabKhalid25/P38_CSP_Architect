@@ -1,4 +1,4 @@
-# Final Academic Project Report — Proposal 38: CSP Architect
+# Final Academic Project Report - Proposal 38: CSP Architect
 
 **Project Title:** CSP Architect: Browser Security Header Workbench  
 **Course / Group:** Class 3, Group 6 | **Domain:** Web Security  
@@ -18,15 +18,15 @@ Modern web applications remain heavily exposed to Cross-Site Scripting (XSS), UI
 
 ---
 
-## 2. End-to-End Traceability: Requirements (`FR-1`–`FR-6`) to Code, Tests & Logs
+## 2. End-to-End Traceability: Requirements (`FR-1`-`FR-6`) to Code, Tests & Logs
 
 | Requirement | Stage Name | Primary Implementation Modules | Automated Verification Tests | Audit & Persistence Evidence |
 | :--- | :--- | :--- | :--- | :--- |
 | **FR-1** | **Local App Crawler & Resource Extractor** | `src/engine/crawler.js` (`validateTargetUrl`, `crawlTarget`) | `tests/evaluation_t1_t6.test.js` (`Baseline`, `T1`, `T2`, `T6`) | Logs `ALLOWLIST_DENIED` (`DENIED`) on external URLs; persists `crawlResult` in `workflow_runs.stages_json`. |
-| **FR-2** | **Header Analysis Engine (10 Rules)** | `src/engine/headerAnalyzer.js` (`parseCsp`, `analyzeHeaders`) | `tests/evaluation_t1_t6.test.js` (`Baseline`, `T1`–`T5`) | Records rule-by-rule `passed`, `severity`, `weight`, `reason`, `evidence`, and `remediation`. |
-| **FR-3** | **Least-Privilege CSP Builder** | `src/engine/cspBuilder.js` (`buildCsp`) | `tests/evaluation_t1_t6.test.js` (`T1`–`T5`) | Generates `default-src 'self'`, SHA-256 script/style hashes, `frame-ancestors`, `object-src 'none'`, and companion headers. |
-| **FR-4** | **Violation-Report Collector** | `src/engine/violationCollector.js` (`simulateViolations`, `normalizeBrowserReport`) | `tests/evaluation_t1_t6.test.js` (`T1`–`T3`) | Persists simulated and live browser W3C `csp-report` events in SQLite `violation_reports`. |
-| **FR-5** | **Before/After Posture Score** | `src/engine/scorer.js` (`calculateBeforeAfterScore`) | `tests/evaluation_t1_t6.test.js` (`Baseline`, `T1`–`T5`) | Computes `before.score`, `after.score`, letter grades (`A`–`F`), `delta`, and itemized deduction/credit breakdown. |
+| **FR-2** | **Header Analysis Engine (10 Rules)** | `src/engine/headerAnalyzer.js` (`parseCsp`, `analyzeHeaders`) | `tests/evaluation_t1_t6.test.js` (`Baseline`, `T1`-`T5`) | Records rule-by-rule `passed`, `severity`, `weight`, `reason`, `evidence`, and `remediation`. |
+| **FR-3** | **Least-Privilege CSP Builder** | `src/engine/cspBuilder.js` (`buildCsp`) | `tests/evaluation_t1_t6.test.js` (`T1`-`T5`) | Generates `default-src 'self'`, SHA-256 script/style hashes, `frame-ancestors`, `object-src 'none'`, and companion headers. |
+| **FR-4** | **Violation-Report Collector** | `src/engine/violationCollector.js` (`simulateViolations`, `normalizeBrowserReport`) | `tests/evaluation_t1_t6.test.js` (`T1`-`T3`) | Persists simulated and live browser W3C `csp-report` events in SQLite `violation_reports`. |
+| **FR-5** | **Before/After Posture Score** | `src/engine/scorer.js` (`calculateBeforeAfterScore`) | `tests/evaluation_t1_t6.test.js` (`Baseline`, `T1`-`T5`) | Computes `before.score`, `after.score`, letter grades (`A`-`F`), `delta`, and itemized deduction/credit breakdown. |
 | **FR-6** | **Downloadable Configuration** | `src/engine/exporter.js`, `src/routes/reports.js` | `tests/security_t_final.test.js` (`Test 2`, `Test 6`) | Exports Raw HTTP Header Block (`.txt`) and Sanitized JSON Report (`.json`) scrubbed via `redactSensitiveData()`. |
 
 ---
@@ -41,7 +41,7 @@ Modern web applications remain heavily exposed to Cross-Site Scripting (XSS), UI
 3. **SSRF & Allowlist Enforcement (`validateTargetUrl`):**
    - Outbound crawling is restricted strictly to `systemConfig.allowlist` (`localhost`, `127.0.0.1`). Unapproved hosts (`https://evil.example.com/attack`, `http://169.254.169.254/latest/meta-data`) are rejected pre-fetch with `403 ERR_ALLOWLIST_DENIED`.
 4. **Input Validation, Payload Limits & Rate Limiting:**
-   - Malformed JSON and invalid schemas return `400 ERR_VALIDATION_FAILED`; payloads `> 100 KB` return `413 ERR_PAYLOAD_TOO_LARGE`; rapid request bursts return `429 ERR_RATE_LIMITED`—all with zero stack trace leakage.
+   - Malformed JSON and invalid schemas return `400 ERR_VALIDATION_FAILED`; payloads `> 100 KB` return `413 ERR_PAYLOAD_TOO_LARGE`; rapid request bursts return `429 ERR_RATE_LIMITED` - all with zero stack trace leakage.
 5. **Append-Only Audit Trail & Persistence (`src/repositories/repo.js`):**
    - All security events (`SUCCESS`, `DENIED`, `FAILURE`) are written to `audit_logs` via `appendAuditLog` with `redactSensitiveData()` scrubbing and survive SQLite restarts intact.
 
@@ -54,5 +54,5 @@ Executed via `npm test` and `npm run eval` across the built-in fixture corpus:
 - **Automated Test Suites:** `100%` passing (`tests/evaluation_t1_t6.test.js` and `tests/security_t_final.test.js`).
 - **Rule Coverage:** **`100.0%`** (`10 / 10` security header rules exercised).
 - **False Positive Rate (Normal Corpus):** **`0.0%`** (`0` false alerts on `/fixtures/normal-safe`; baseline score `100/100`).
-- **False Negative Rate (Adverse Corpus `T1`–`T6`):** **`0.0%`** (`6 / 6` adverse fixtures accurately detected, remediated, or blocked).
+- **False Negative Rate (Adverse Corpus `T1`-`T6`):** **`0.0%`** (`6 / 6` adverse fixtures accurately detected, remediated, or blocked).
 - **Mean Pipeline Decision Latency:** **`~5.4 ms`** per complete 6-stage local workflow execution (`~1.1 ms` for `T6` allowlist rejection).

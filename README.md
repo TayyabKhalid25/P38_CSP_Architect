@@ -16,7 +16,7 @@
 2. **`FR-2` Header Analysis (`src/engine/headerAnalyzer.js`):** Evaluates HTTP response headers against 10 weighted security rules (`HDR-CSP-PRESENT` through `HDR-REFERRER-POLICY`) with explainable findings and remediation guidance.
 3. **`FR-3` Least-Privilege CSP Builder (`src/engine/cspBuilder.js`):** Synthesizes strict CSP directives (`default-src 'self'`, SHA-256 script/style hashes, `frame-ancestors 'none'`, `object-src 'none'`) and companion headers.
 4. **`FR-4` Violation-Report Collector (`src/engine/violationCollector.js`):** Deterministically simulates policy violations against discovered DOM resources and collects real browser W3C `csp-report` payloads from an interactive sandboxed iframe (`/fixtures/sandbox-frame`).
-5. **`FR-5` Before/After Posture Score (`src/engine/scorer.js`):** Computes quantitative before/after scores (`0–100`), letter grades (`A`–`F`), pass/fail status against configurable thresholds, and itemized score breakdowns.
+5. **`FR-5` Before/After Posture Score (`src/engine/scorer.js`):** Computes quantitative before/after scores (`0-100`), letter grades (`A`-`F`), pass/fail status against configurable thresholds, and itemized score breakdowns.
 6. **`FR-6` Downloadable Configuration (`src/engine/exporter.js`):** Exports deployment-ready **Raw HTTP Response Header Blocks (`.txt`)** and **Sanitized JSON Evidence Reports (`.json`)** scrubbed of any sensitive tokens.
 
 ---
@@ -65,10 +65,10 @@ npm run eval
 
 ## 5. Complete Documentation Index (`Docs/`)
 
-- [`Docs/ARCHITECTURE_AND_DFD.md`](Docs/ARCHITECTURE_AND_DFD.md) — 5-Layer Architecture & Mermaid Data-Flow Diagram with Trust Boundaries (`TB-1`–`TB-4`).
-- [`Docs/THREAT_MODEL.md`](Docs/THREAT_MODEL.md) — 10-Threat STRIDE Threat Model mapped to code controls, audit events, and tests.
-- [`Docs/TEST_PLAN_AND_RESULTS.md`](Docs/TEST_PLAN_AND_RESULTS.md) — Complete `T1`–`T6` and `T-final` test matrix and quantitative metrics (`100%` coverage, `0%` FP/FN).
-- [`Docs/USER_AND_ADMIN_GUIDE.md`](Docs/USER_AND_ADMIN_GUIDE.md) — Step-by-step operating manual for Operators, Viewers, and Administrators.
-- [`Docs/LIMITATIONS_AND_ETHICS.md`](Docs/LIMITATIONS_AND_ETHICS.md) — Technical limitations and ethical allowlist/defensive guardrails.
-- [`Docs/FINAL_REPORT.md`](Docs/FINAL_REPORT.md) — Comprehensive academic report linking claims to code, tests, logs, and measured metrics.
-- [`Docs/DEMO_SCRIPT_15MIN.md`](Docs/DEMO_SCRIPT_15MIN.md) — Reproducible 15-minute live classroom demonstration walkthrough.
+- [`Docs/ARCHITECTURE_AND_DFD.md`](Docs/ARCHITECTURE_AND_DFD.md) - 5-Layer Architecture & Mermaid Data-Flow Diagram with Trust Boundaries (`TB-1`-`TB-4`).
+- [`Docs/THREAT_MODEL.md`](Docs/THREAT_MODEL.md) - 10-Threat STRIDE Threat Model mapped to code controls, audit events, and tests.
+- [`Docs/TEST_PLAN_AND_RESULTS.md`](Docs/TEST_PLAN_AND_RESULTS.md) - Complete `T1`-`T6` and `T-final` test matrix and quantitative metrics (`100%` coverage, `0%` FP/FN).
+- [`Docs/USER_AND_ADMIN_GUIDE.md`](Docs/USER_AND_ADMIN_GUIDE.md) - Step-by-step operating manual for Operators, Viewers, and Administrators.
+- [`Docs/LIMITATIONS_AND_ETHICS.md`](Docs/LIMITATIONS_AND_ETHICS.md) - Technical limitations and ethical allowlist/defensive guardrails.
+- [`Docs/FINAL_REPORT.md`](Docs/FINAL_REPORT.md) - Comprehensive academic report linking claims to code, tests, logs, and measured metrics.
+- [`Docs/DEMO_SCRIPT_15MIN.md`](Docs/DEMO_SCRIPT_15MIN.md) - Reproducible 15-minute live classroom demonstration walkthrough.

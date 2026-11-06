@@ -2,7 +2,7 @@
 
 /**
  * FR-5: Weighted Before/After Security Posture Scoring Engine
- * Computes explainable 0–100 security scores, letter grades (A–F), PASS/FAIL status
+ * Computes explainable 0-100 security scores, letter grades (A-F), PASS/FAIL status
  * against `systemConfig.passScoreThreshold`, and itemized rule/risk breakdowns.
  */
 
@@ -10,7 +10,7 @@ const { DEFAULT_SYSTEM_CONFIG } = require('../contracts/schemas');
 const { analyzeHeaders } = require('./headerAnalyzer');
 
 /**
- * Maps a numeric 0–100 score to an academic/security letter grade.
+ * Maps a numeric 0-100 score to an academic/security letter grade.
  * @param {number} score
  * @returns {'A'|'B'|'C'|'D'|'F'}
  */

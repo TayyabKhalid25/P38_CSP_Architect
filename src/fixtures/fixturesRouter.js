@@ -98,7 +98,7 @@ function clearDefaultSecurityHeaders(res) {
   res.removeHeader('Referrer-Policy');
 }
 
-// GET /fixtures — JSON catalog of all built-in test fixtures
+// GET /fixtures - JSON catalog of all built-in test fixtures
 router.get('/', (_req, res) => {
   res.json({
     ok: true,
@@ -108,7 +108,7 @@ router.get('/', (_req, res) => {
   });
 });
 
-// GET /fixtures/normal-safe — Hardened baseline target
+// GET /fixtures/normal-safe - Hardened baseline target
 router.get('/normal-safe', (_req, res) => {
   clearDefaultSecurityHeaders(res);
   res.setHeader(
@@ -124,7 +124,7 @@ router.get('/normal-safe', (_req, res) => {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Normal Safe Baseline — Hardened Portal</title>
+  <title>Normal Safe Baseline - Hardened Portal</title>
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
@@ -141,7 +141,7 @@ router.get('/normal-safe', (_req, res) => {
 </html>`);
 });
 
-// GET /fixtures/t1-xss — T1 XSS & Eval Test Fixture
+// GET /fixtures/t1-xss - T1 XSS & Eval Test Fixture
 router.get('/t1-xss', (_req, res) => {
   clearDefaultSecurityHeaders(res);
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -150,7 +150,7 @@ router.get('/t1-xss', (_req, res) => {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>T1 Fixture — Legacy Search & XSS Sink</title>
+  <title>T1 Fixture - Legacy Search & XSS Sink</title>
 </head>
 <body>
   <h1>T1: Vulnerable Legacy Search Page</h1>
@@ -166,7 +166,7 @@ router.get('/t1-xss', (_req, res) => {
 </html>`);
 });
 
-// GET /fixtures/t2-inline — T2 Inline Scripts & Styles Fixture
+// GET /fixtures/t2-inline - T2 Inline Scripts & Styles Fixture
 router.get('/t2-inline', (_req, res) => {
   clearDefaultSecurityHeaders(res);
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
@@ -178,7 +178,7 @@ router.get('/t2-inline', (_req, res) => {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>T2 Fixture — Inline Configuration & Styling</title>
+  <title>T2 Fixture - Inline Configuration & Styling</title>
   <style>body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; }</style>
 </head>
 <body>
@@ -190,7 +190,7 @@ router.get('/t2-inline', (_req, res) => {
 </html>`);
 });
 
-// GET /fixtures/t3-third-party — T3 Third-Party Resource & Wildcard CSP Simulation
+// GET /fixtures/t3-third-party - T3 Third-Party Resource & Wildcard CSP Simulation
 router.get('/t3-third-party', (_req, res) => {
   clearDefaultSecurityHeaders(res);
   res.setHeader(
@@ -203,7 +203,7 @@ router.get('/t3-third-party', (_req, res) => {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>T3 Fixture — Overly Permissive Wildcard Policy & Third-Party Scripts</title>
+  <title>T3 Fixture - Overly Permissive Wildcard Policy & Third-Party Scripts</title>
   <script src="https://cdn.untrusted-analytics.example/tracker.js"></script>
 </head>
 <body>
@@ -215,7 +215,7 @@ router.get('/t3-third-party', (_req, res) => {
 </html>`);
 });
 
-// GET /fixtures/t4-clickjacking — T4 Clickjacking Vulnerable Form Fixture
+// GET /fixtures/t4-clickjacking - T4 Clickjacking Vulnerable Form Fixture
 router.get('/t4-clickjacking', (_req, res) => {
   clearDefaultSecurityHeaders(res);
   res.setHeader(
@@ -230,7 +230,7 @@ router.get('/t4-clickjacking', (_req, res) => {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>T4 Fixture — Wire Transfer Authorization (Clickjacking Target)</title>
+  <title>T4 Fixture - Wire Transfer Authorization (Clickjacking Target)</title>
 </head>
 <body>
   <h1>T4: Treasury Fund Transfer Approval</h1>
@@ -244,14 +244,14 @@ router.get('/t4-clickjacking', (_req, res) => {
 </html>`);
 });
 
-// GET /fixtures/t5-disguised.txt — Disguised text payload for T5 MIME sniffing
+// GET /fixtures/t5-disguised.txt - Disguised text payload for T5 MIME sniffing
 router.get('/t5-disguised.txt', (_req, res) => {
   clearDefaultSecurityHeaders(res);
   res.setHeader('Content-Type', 'text/plain; charset=utf-8');
   res.status(200).send('/* Disguised user upload text file containing executable JS */ console.log("MIME_SNIFFED_EXECUTION");');
 });
 
-// GET /fixtures/t5-mime-sniffing — T5 MIME Sniffing & Legacy Object Fixture
+// GET /fixtures/t5-mime-sniffing - T5 MIME Sniffing & Legacy Object Fixture
 router.get('/t5-mime-sniffing', (_req, res) => {
   clearDefaultSecurityHeaders(res);
   res.setHeader(
@@ -266,7 +266,7 @@ router.get('/t5-mime-sniffing', (_req, res) => {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>T5 Fixture — Disguised Upload & Legacy Plugin</title>
+  <title>T5 Fixture - Disguised Upload & Legacy Plugin</title>
 </head>
 <body>
   <h1>T5: User Avatar Upload Preview & Legacy Applet</h1>
@@ -277,7 +277,7 @@ router.get('/t5-mime-sniffing', (_req, res) => {
 </html>`);
 });
 
-// GET /fixtures/t6-allowlist — T6 Local Allowlist Control Endpoint
+// GET /fixtures/t6-allowlist - T6 Local Allowlist Control Endpoint
 router.get('/t6-allowlist', (_req, res) => {
   clearDefaultSecurityHeaders(res);
   res.setHeader(
@@ -293,7 +293,7 @@ router.get('/t6-allowlist', (_req, res) => {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>T6 Fixture — Local Allowlist Control Endpoint</title>
+  <title>T6 Fixture - Local Allowlist Control Endpoint</title>
 </head>
 <body>
   <h1>T6: Approved Localhost Target</h1>
@@ -302,7 +302,7 @@ router.get('/t6-allowlist', (_req, res) => {
 </html>`);
 });
 
-// GET /fixtures/sandbox-frame — Live Browser CSP Violation Report-Only Sandbox
+// GET /fixtures/sandbox-frame - Live Browser CSP Violation Report-Only Sandbox
 router.get('/sandbox-frame', (req, res) => {
   clearDefaultSecurityHeaders(res);
   const runId = req.query.runId ? String(req.query.runId).replace(/[^a-zA-Z0-9_-]/g, '') : '';
@@ -321,7 +321,7 @@ router.get('/sandbox-frame', (req, res) => {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CSP Architect — Live Browser Violation Sandbox</title>
+  <title>CSP Architect - Live Browser Violation Sandbox</title>
 </head>
 <body style="background:#0f172a;color:#e2e8f0;font-family:monospace;padding:12px;margin:0;">
   <div><strong>[Live Browser CSP Sandbox]</strong> Triggering inline script violation against <code>Content-Security-Policy-Report-Only: script-src 'self'</code>...</div>

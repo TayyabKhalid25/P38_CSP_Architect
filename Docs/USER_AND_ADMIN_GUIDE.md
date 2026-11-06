@@ -1,6 +1,6 @@
 # User, Operator & Administrator Guide
 
-**Project:** Proposal 38 — CSP Architect: Browser Security Header Workbench  
+**Project:** Proposal 38 - CSP Architect: Browser Security Header Workbench  
 **Course / Group:** Class 3, Group 6 | **Domain:** Web Security  
 **Lead Author:** Tayyab Khalid
 
@@ -8,7 +8,7 @@
 
 ## 1. Prerequisites & Local Installation
 
-- **Runtime:** Node.js `>= 22.5.0` (uses Node's built-in `node:sqlite` and `node:test` modules—zero native C++ build toolchains required).
+- **Runtime:** Node.js `>= 22.5.0` (uses Node's built-in `node:sqlite` and `node:test` modules - zero native C++ build toolchains required).
 - **OS Support:** Windows, macOS, and Linux.
 
 ### Quick Start Commands
@@ -36,7 +36,7 @@ npm run eval
 | Role | Username | Password | Permitted Actions | Forbidden Actions (`403 ERR_AUTH_FORBIDDEN`) |
 | :--- | :--- | :--- | :--- | :--- |
 | **Administrator** | `admin` | `Admin@CSP2026!` | Full access: 6-stage pipeline, evaluation suite, run history, side-by-side comparison, raw HTTP header & JSON exports, Admin rule/threshold/allowlist configuration, and Append-Only Audit Log viewer. | None (all actions logged in `audit_logs`). |
-| **Security Operator** | `operator` | `Operator@CSP2026!` | Execute 1-click & step-by-step 6-stage pipeline (`FR-1`–`FR-6`), run `T1`–`T6` evaluation suite, view & compare runs, and export Raw HTTP Header (`.txt`) & Sanitized JSON (`.json`) artifacts. | Modifying `system_config` (`/api/admin/*`) and viewing `/api/audit/logs`. |
+| **Security Operator** | `operator` | `Operator@CSP2026!` | Execute 1-click & step-by-step 6-stage pipeline (`FR-1`-`FR-6`), run `T1`-`T6` evaluation suite, view & compare runs, and export Raw HTTP Header (`.txt`) & Sanitized JSON (`.json`) artifacts. | Modifying `system_config` (`/api/admin/*`) and viewing `/api/audit/logs`. |
 | **Restricted Viewer** | `viewer` | `Viewer@CSP2026!` | Read-only access to inspect past workflow runs (`GET /api/reports/runs`) and compare two existing runs (`GET /api/reports/compare`). | Executing crawls/pipelines, exporting `.txt`/`.json` bundles, modifying admin config, or reading raw audit logs. |
 
 ---
@@ -46,13 +46,13 @@ npm run eval
 1. **Log in as `operator`** (`operator` / `Operator@CSP2026!`).
 2. **Select a Target Application:**
    - Choose one of the built-in local evaluation fixtures from the preset selector:
-     - `/fixtures/normal-safe` — Hardened baseline web application
-     - `/fixtures/t1-xss` — Missing CSP + DOM XSS sink + `eval()` + inline `onerror`
-     - `/fixtures/t2-inline` — Safe inline `<script>`/`<style>` blocks + unsafe `onclick` attribute
-     - `/fixtures/t3-third-party` — Overly permissive `default-src * 'unsafe-inline'` + external trackers
-     - `/fixtures/t4-clickjacking` — Sensitive form missing `X-Frame-Options` & `frame-ancestors`
-     - `/fixtures/t5-mime-sniffing` — Missing `X-Content-Type-Options: nosniff` & `object-src 'none'`
-     - `https://evil.example.com/attack` — Unapproved external host (demonstrates `T6` allowlist rejection)
+     - `/fixtures/normal-safe` - Hardened baseline web application
+     - `/fixtures/t1-xss` - Missing CSP + DOM XSS sink + `eval()` + inline `onerror`
+     - `/fixtures/t2-inline` - Safe inline `<script>`/`<style>` blocks + unsafe `onclick` attribute
+     - `/fixtures/t3-third-party` - Overly permissive `default-src * 'unsafe-inline'` + external trackers
+     - `/fixtures/t4-clickjacking` - Sensitive form missing `X-Frame-Options` & `frame-ancestors`
+     - `/fixtures/t5-mime-sniffing` - Missing `X-Content-Type-Options: nosniff` & `object-src 'none'`
+     - `https://evil.example.com/attack` - Unapproved external host (demonstrates `T6` allowlist rejection)
    - Or type any custom URL on an approved local host (`http://localhost:3000/...` or `http://127.0.0.1:3000/...`).
 3. **Choose Execution Mode:**
    - **One-Click Full Pipeline:** Click **"Run Full 6-Stage Pipeline"** to execute `FR-1` through `FR-6` in sequence, persist the workflow run in SQLite, and populate all 6 stage cards.
@@ -61,8 +61,8 @@ npm run eval
    - In Stage 4, click **"Trigger Live Browser Sandbox Violation"** to load `/fixtures/sandbox-frame` in a sandboxed iframe. Your browser will enforce `Content-Security-Policy-Report-Only` and dispatch a real W3C `csp-report` payload to `POST /api/engine/csp-report`.
 5. **Download Hardened Configurations (`FR-6`):**
    - In Stage 6 (or from the Run History table), click:
-     - **Download Raw HTTP Headers (`.txt`)** — Ready-to-deploy `Content-Security-Policy`, `X-Frame-Options`, `X-Content-Type-Options`, and `Referrer-Policy` headers.
-     - **Download Sanitized JSON Report (`.json`)** — Complete reproducible decision, score breakdown, and evidence bundle with all sensitive tokens redacted.
+     - **Download Raw HTTP Headers (`.txt`)** - Ready-to-deploy `Content-Security-Policy`, `X-Frame-Options`, `X-Content-Type-Options`, and `Referrer-Policy` headers.
+     - **Download Sanitized JSON Report (`.json`)** - Complete reproducible decision, score breakdown, and evidence bundle with all sensitive tokens redacted.
 
 ---
 

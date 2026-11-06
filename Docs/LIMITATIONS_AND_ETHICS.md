@@ -1,6 +1,6 @@
 # Technical Limitations & Ethical Scope Statement
 
-**Project:** Proposal 38 — CSP Architect: Browser Security Header Workbench  
+**Project:** Proposal 38 - CSP Architect: Browser Security Header Workbench  
 **Course / Group:** Class 3, Group 6 | **Domain:** Web Security  
 **Lead Author:** Tayyab Khalid
 

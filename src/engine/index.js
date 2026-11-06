@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Security Engine Orchestrator (FR-1 through FR-6) & Evaluation Benchmark Suite (T1–T6)
+ * Security Engine Orchestrator (FR-1 through FR-6) & Evaluation Benchmark Suite (T1-T6)
  * Exports all 6 individual stage functions plus `runFullPipeline` and `runEvaluationSuite`.
  */
 
@@ -139,7 +139,7 @@ async function runEvaluationSuite(
     }
   };
 
-  // Case 0: Baseline (/fixtures/normal-safe) — Negative control (should have 0 critical/high failures and PASS)
+  // Case 0: Baseline (/fixtures/normal-safe) - Negative control (should have 0 critical/high failures and PASS)
   {
     const caseStart = performance.now();
     const targetUrl = `${resolvedBase}/fixtures/normal-safe`;

@@ -1,6 +1,6 @@
 # STRIDE Threat Model & Mitigation Traceability Matrix
 
-**Project:** Proposal 38 — CSP Architect: Browser Security Header Workbench  
+**Project:** Proposal 38 - CSP Architect: Browser Security Header Workbench  
 **Course / Group:** Class 3, Group 6 | **Domain:** Web Security  
 **Lead Author:** Tayyab Khalid
 
@@ -18,7 +18,7 @@ Every identified threat is mapped directly to:
 
 ---
 
-## 2. Concrete Threat Catalog (10 Threats — Exceeding the Minimum 8 Required)
+## 2. Concrete Threat Catalog (10 Threats - Exceeding the Minimum 8 Required)
 
 | Threat ID | STRIDE Category | Threat Scenario & Attack Vector | Affected Boundary & Module | Concrete Mitigation & Security Control | Verification Test Case |
 | :--- | :--- | :--- | :--- | :--- | :--- |

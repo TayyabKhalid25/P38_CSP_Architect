@@ -1,5 +1,5 @@
-# 00 — Master System Architecture & Interface Contracts
-**Project:** Proposal 38 — CSP Architect: Browser Security Header Workbench  
+# 00 - Master System Architecture & Interface Contracts
+**Project:** Proposal 38 - CSP Architect: Browser Security Header Workbench  
 **Course / Group:** Class 3, Group 6 | Domain: Web Security  
 **Lead Architect:** Tayyab Khalid
 
@@ -28,7 +28,7 @@ Every member of Group 6 works on an isolated Git branch (`feat/nafay-backend-aut
 
 Each stage (`FR-1` through `FR-6`) outputs a validated, normalized object containing `stage`, `status` (`COMPLETED` | `REJECTED` | `WARNING`), `evidence` (array of explainable findings), and stage-specific normalized fields:
 
-### Stage 1 (`FR-1`: Local Crawler Output — `crawlResult`)
+### Stage 1 (`FR-1`: Local Crawler Output - `crawlResult`)
 ```json
 {
   "stage": "FR-1_CRAWLER",
@@ -55,7 +55,7 @@ Each stage (`FR-1` through `FR-6`) outputs a validated, normalized object contai
 }
 ```
 
-### Stage 2 (`FR-2`: Header Analysis Output — `headerAnalysis`)
+### Stage 2 (`FR-2`: Header Analysis Output - `headerAnalysis`)
 ```json
 {
   "stage": "FR-2_HEADER_ANALYSIS",
@@ -80,7 +80,7 @@ Each stage (`FR-1` through `FR-6`) outputs a validated, normalized object contai
 }
 ```
 
-### Stage 3 (`FR-3`: CSP Builder Output — `cspBuild`)
+### Stage 3 (`FR-3`: CSP Builder Output - `cspBuild`)
 ```json
 {
   "stage": "FR-3_CSP_BUILDER",
@@ -109,7 +109,7 @@ Each stage (`FR-1` through `FR-6`) outputs a validated, normalized object contai
 }
 ```
 
-### Stage 4 (`FR-4`: Violation-Report Collector Output — `violationAnalysis`)
+### Stage 4 (`FR-4`: Violation-Report Collector Output - `violationAnalysis`)
 ```json
 {
   "stage": "FR-4_VIOLATION_COLLECTOR",
@@ -129,7 +129,7 @@ Each stage (`FR-1` through `FR-6`) outputs a validated, normalized object contai
 }
 ```
 
-### Stage 5 (`FR-5`: Before/After Score Output — `scoreComparison`)
+### Stage 5 (`FR-5`: Before/After Score Output - `scoreComparison`)
 ```json
 {
   "stage": "FR-5_BEFORE_AFTER_SCORE",
@@ -152,7 +152,7 @@ Each stage (`FR-1` through `FR-6`) outputs a validated, normalized object contai
 }
 ```
 
-### Stage 6 (`FR-6`: Downloadable Configuration Output — `exportBundle`)
+### Stage 6 (`FR-6`: Downloadable Configuration Output - `exportBundle`)
 ```json
 {
   "stage": "FR-6_DOWNLOADABLE_CONFIG",

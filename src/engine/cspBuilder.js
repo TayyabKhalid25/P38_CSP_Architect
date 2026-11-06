@@ -140,7 +140,7 @@ function buildCsp(
       evidence: unsafeInlineScripts
         .map(
           (s) =>
-            `inline-script[${s.index}] (sinks: ${(s.detectedSinks || []).concat(s.usesEval ? ['eval()'] : []).join(', ')}) — preview: "${s.preview}"`
+            `inline-script[${s.index}] (sinks: ${(s.detectedSinks || []).concat(s.usesEval ? ['eval()'] : []).join(', ')}) - preview: "${s.preview}"`
         )
         .join(' | '),
     });
