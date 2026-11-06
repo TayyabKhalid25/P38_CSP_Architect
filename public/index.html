@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSP Architect — Browser Security Header Workbench</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Confirmation Modal for High-Impact Admin Changes -->
+  <div id="confirm-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="confirm-modal-title" class="modal-title">Confirm System Policy Update</h3>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-modal-message">
+          Are you sure you want to update the active security engine configuration? This change will be recorded in the append-only audit log and will immediately affect subsequent security posture evaluations.
+        </p>
+        <div id="confirm-modal-summary" class="code-block modal-summary-box"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="confirm-modal-cancel" class="btn btn-secondary">Cancel</button>
+        <button type="button" id="confirm-modal-proceed" class="btn btn-primary">Confirm &amp; Apply Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       STRICT MANUAL LOGIN SCREEN (Zero Pre-filled Credentials or Hints)
+       ===================================================================== -->
+  <main id="login-screen" class="login-wrapper">
+    <section class="login-card" aria-labelledby="login-heading">
+      <div class="login-brand">
+        <div class="brand-shield" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            <path d="M9 12l2 2 4-4" />
+          </svg>
+        </div>
+        <div>
+          <span class="brand-kicker">PROPOSAL 38 &bull; WEB SECURITY WORKBENCH</span>
+          <h1 id="login-heading" class="login-title">CSP Architect</h1>
+          <p class="login-subtitle">Browser Security Header &amp; Least-Privilege Policy Workbench</p>
+        </div>
+      </div>
+
+      <div id="login-error-banner" class="alert alert-danger hidden" role="alert"></div>
+
+      <form id="login-form" class="login-form" autocomplete="off" novalidate>
+        <div class="form-group">
+          <label for="login-username" class="form-label">Username</label>
+          <input
+            type="text"
+            id="login-username"
+            name="username"
+            class="form-input"
+            placeholder="Enter operator username"
+            required
+            autocomplete="username"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="login-password" class="form-label">Password</label>
+          <input
+            type="password"
+            id="login-password"
+            name="password"
+            class="form-input"
+            placeholder="Enter password"
+            required
+            autocomplete="current-password"
+          />
+        </div>
+
+        <button type="submit" id="login-submit-btn" class="btn btn-primary btn-block">
+          Sign In to Security Workbench
+        </button>
+      </form>
+
+      <footer class="login-footer">
+        <span>Local-Only Allowlist Enforced</span>
+        <span>&bull;</span>
+        <span>RBAC &amp; CSRF Protected</span>
+        <span>&bull;</span>
+        <span>Engine v1.0.0</span>
+      </footer>
+    </section>
+  </main>
+
+  <!-- =====================================================================
+       AUTHENTICATED WORKBENCH SHELL
+       ===================================================================== -->
+  <div id="app-shell" class="app-shell hidden">
+    <!-- Top Application Header Bar -->
+    <header class="top-header">
+      <div class="header-left">
+        <div class="brand-shield brand-shield-sm" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            <path d="M9 12l2 2 4-4" />
+          </svg>
+        </div>
+        <div>
+          <div class="header-title-row">
+            <h1 class="app-title">CSP Architect</h1>
+            <span class="version-pill">Engine v1.0.0</span>
+          </div>
+          <p class="app-subtitle">Browser Security Header &amp; Least-Privilege CSP Workbench</p>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <div class="active-target-pill">
+          <span class="target-pill-label">ACTIVE TARGET:</span>
+          <code id="header-active-target" class="target-pill-url">/fixtures/t1-xss</code>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="user-session-badge">
+          <span class="user-label">Signed in as</span>
+          <strong id="header-username" class="user-name">—</strong>
+          <span id="header-role-badge" class="role-badge role-operator">OPERATOR</span>
+        </div>
+        <button type="button" id="logout-btn" class="btn btn-secondary btn-sm">
+          Sign Out
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Navigation Bar -->
+    <nav class="main-nav" role="tablist" aria-label="CSP Architect Primary Navigation">
+      <button
+        type="button"
+        id="tab-btn-workbench"
+        class="nav-tab active"
+        role="tab"
+        aria-selected="true"
+        aria-controls="panel-workbench"
+        data-tab="workbench"
+      >
+        <span class="tab-step-num">01</span>
+        6-Stage Security Workbench (FR-1 &ndash; FR-6)
+      </button>
+      <button
+        type="button"
+        id="tab-btn-evaluation"
+        class="nav-tab"
+        role="tab"
+        aria-selected="false"
+        aria-controls="panel-evaluation"
+        data-tab="evaluation"
+      >
+        <span class="tab-step-num">02</span>
+        Evaluation &amp; Metrics Suite (T1 &ndash; T6)
+      </button>
+      <button
+        type="button"
+        id="tab-btn-history"
+        class="nav-tab"
+        role="tab"
+        aria-selected="false"
+        aria-controls="panel-history"
+        data-tab="history"
+      >
+        <span class="tab-step-num">03</span>
+        History &amp; Run Comparison
+      </button>
+      <button
+        type="button"
+        id="tab-btn-admin"
+        class="nav-tab"
+        role="tab"
+        aria-selected="false"
+        aria-controls="panel-admin"
+        data-tab="admin"
+      >
+        <span class="tab-step-num">04</span>
+        Admin &amp; Audit Console
+      </button>
+    </nav>
+
+    <!-- Global Alert Banner for Error / Rate-Limit / RBAC Feedback -->
+    <div id="global-alert-container" class="global-alert-container hidden" role="alert">
+      <div class="global-alert-content">
+        <strong id="global-alert-code" class="global-alert-code">NOTICE</strong>
+        <span id="global-alert-message"></span>
+      </div>
+      <button type="button" id="global-alert-close" class="btn-icon" aria-label="Dismiss alert">&times;</button>
+    </div>
+
+    <!-- ===================================================================
+         TAB 1: 6-STAGE SECURITY WORKBENCH (FR-1 TO FR-6)
+         =================================================================== -->
+    <section id="panel-workbench" class="tab-panel active" role="tabpanel" aria-labelledby="tab-btn-workbench">
+      <!-- Target Selector & Execution Control Bar -->
+      <div class="control-bar card">
+        <div class="control-bar-grid">
+          <div class="form-group">
+            <label for="target-preset-select" class="form-label">Built-in Local Target Fixtures &amp; Adverse Cases</label>
+            <select id="target-preset-select" class="form-select">
+              <option value="/fixtures/t1-xss">T1: Reflected/DOM XSS, eval() &amp; Missing CSP (/fixtures/t1-xss)</option>
+              <option value="/fixtures/normal-safe">Baseline: Hardened Normal Safe App (/fixtures/normal-safe)</option>
+              <option value="/fixtures/t2-inline">T2: Inline Scripts, Styles &amp; Event Handlers (/fixtures/t2-inline)</option>
+              <option value="/fixtures/t3-third-party">T3: Untrusted Third-Party Origins &amp; Wildcard CSP (/fixtures/t3-third-party)</option>
+              <option value="/fixtures/t4-clickjacking">T4: Clickjacking / Missing Frame-Ancestors (/fixtures/t4-clickjacking)</option>
+              <option value="/fixtures/t5-mime-sniffing">T5: MIME Sniffing &amp; Missing nosniff (/fixtures/t5-mime-sniffing)</option>
+              <option value="/fixtures/t6-allowlist">T6: Local Allowlist Verification Endpoint (/fixtures/t6-allowlist)</option>
+              <option value="https://evil.example.com/attack">T6 Adverse: External Host SSRF Test (https://evil.example.com/attack)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="target-url-input" class="form-label">Target Inspection URL (Allowlist Validated)</label>
+            <input
+              type="url"
+              id="target-url-input"
+              class="form-input code-input"
+              value="http://localhost:3000/fixtures/t1-xss"
+              placeholder="http://localhost:3000/fixtures/..."
+            />
+          </div>
+
+          <div class="control-actions">
+            <button type="button" id="run-pipeline-btn" class="btn btn-primary">
+              Run Full 6-Stage Pipeline
+            </button>
+            <button type="button" id="run-step1-top-btn" class="btn btn-secondary">
+              Crawl Target Only (FR-1)
+            </button>
+          </div>
+        </div>
+
+        <!-- 6-Stage Progress Strip -->
+        <div id="pipeline-progress-strip" class="pipeline-strip">
+          <div class="stage-pill" data-stage-pill="1">
+            <span class="stage-pill-code">FR-1</span>
+            <span class="stage-pill-name">Local Crawler</span>
+            <span id="pill-status-1" class="status-dot status-idle">IDLE</span>
+          </div>
+          <div class="stage-pill" data-stage-pill="2">
+            <span class="stage-pill-code">FR-2</span>
+            <span class="stage-pill-name">Header Analysis</span>
+            <span id="pill-status-2" class="status-dot status-idle">IDLE</span>
+          </div>
+          <div class="stage-pill" data-stage-pill="3">
+            <span class="stage-pill-code">FR-3</span>
+            <span class="stage-pill-name">CSP Builder</span>
+            <span id="pill-status-3" class="status-dot status-idle">IDLE</span>
+          </div>
+          <div class="stage-pill" data-stage-pill="4">
+            <span class="stage-pill-code">FR-4</span>
+            <span class="stage-pill-name">Violation Collector</span>
+            <span id="pill-status-4" class="status-dot status-idle">IDLE</span>
+          </div>
+          <div class="stage-pill" data-stage-pill="5">
+            <span class="stage-pill-code">FR-5</span>
+            <span class="stage-pill-name">Before/After Score</span>
+            <span id="pill-status-5" class="status-dot status-idle">IDLE</span>
+          </div>
+          <div class="stage-pill" data-stage-pill="6">
+            <span class="stage-pill-code">FR-6</span>
+            <span class="stage-pill-name">Export Config</span>
+            <span id="pill-status-6" class="status-dot status-idle">IDLE</span>
+          </div>
+          <div class="pipeline-meta-pill">
+            <span>Run ID: <code id="active-run-id-label">None</code></span>
+            <span>&bull;</span>
+            <span>Latency: <strong id="active-run-latency-label">—</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6-STAGE WORKBENCH GRID -->
+      <div class="stages-stack">
+        <!-- ===============================================================
+             STAGE 1 (FR-1): LOCAL CRAWLER
+             =============================================================== -->
+        <article id="stage-card-1" class="stage-card card">
+          <header class="stage-card-header">
+            <div class="stage-title-group">
+              <span class="stage-tag">STAGE 1 &bull; FR-1</span>
+              <h2 class="stage-title">Local Crawler &amp; DOM Resource / Hash Extractor</h2>
+              <p class="stage-desc">Verifies target host against local allowlist, fetches HTTP response headers, and extracts scripts, SHA-256 hashes, styles, frames, and inline XSS sinks.</p>
+            </div>
+            <div class="stage-header-actions">
+              <span id="stage1-status-badge" class="badge badge-neutral">IDLE</span>
+              <button type="button" id="run-stage1-btn" class="btn btn-secondary btn-sm">
+                Run Stage 1 (Crawl)
+              </button>
+            </div>
+          </header>
+
+          <div class="stage-card-body">
+            <div class="kpi-row kpi-row-6">
+              <div class="mini-kpi">
+                <span class="mini-kpi-label">HTTP Status</span>
+                <strong id="s1-http-status" class="mini-kpi-val">—</strong>
+              </div>
+              <div class="mini-kpi">
+                <span class="mini-kpi-label">Normalized Origin</span>
+                <strong id="s1-origin" class="mini-kpi-val code-text">—</strong>
+              </div>
+              <div class="mini-kpi">
+                <span class="mini-kpi-label">External Scripts</span>
+                <strong id="s1-ext-scripts" class="mini-kpi-val">0</strong>
+              </div>
+              <div class="mini-kpi">
+                <span class="mini-kpi-label">Inline Scripts (Hashed)</span>
+                <strong id="s1-inline-scripts" class="mini-kpi-val">0</strong>
+              </div>
+              <div class="mini-kpi">
+                <span class="mini-kpi-label">Inline Event Handlers</span>
+                <strong id="s1-event-handlers" class="mini-kpi-val">0</strong>
+              </div>
+              <div class="mini-kpi">
+                <span class="mini-kpi-label">eval() / DOM XSS Sinks</span>
+                <strong id="s1-eval-sinks" class="mini-kpi-val">None</strong>
+              </div>
+            </div>
+
+            <div class="two-col-grid">
+              <div>
+                <h3 class="subsection-title">Discovered Scripts, Styles, Resources &amp; SHA-256 Hashes</h3>
+                <div class="table-responsive">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Resource Type</th>
+                        <th>Source / Preview</th>
+                        <th>Computed SHA-256 / Safety Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="stage1-scripts-tbody">
+                      <tr>
+                        <td colspan="3" class="empty-cell">Run Stage 1 or Full Pipeline to inspect target DOM resources.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3 class="subsection-title mt-md">Inline Event Handlers &amp; Dynamic Code Sinks</h3>
+                <div class="table-responsive">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Element / Context</th>
+                        <th>Attribute / Sink</th>
+                        <th>Code Snippet</th>
+                      </tr>
+                    </thead>
+                    <tbody id="stage1-handlers-tbody">
+                      <tr>
+                        <td colspan="3" class="empty-cell">No inline event attributes or dynamic sinks analyzed yet.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="subsection-title">Baseline Raw HTTP Response Headers</h3>
+                <pre id="stage1-raw-headers" class="code-block">No HTTP headers captured yet.</pre>
+
+                <h3 class="subsection-title mt-md">Allowlist &amp; Crawler Evidence Log</h3>
+                <ul id="stage1-evidence-list" class="evidence-list">
+                  <li class="evidence-empty">Waiting for target crawl execution.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ===============================================================
+             STAGE 2 (FR-2): HEADER ANALYSIS
+             =============================================================== -->
+        <article id="stage-card-2" class="stage-card card">
+          <header class="stage-card-header">
+            <div class="stage-title-group">
+              <span class="stage-tag">STAGE 2 &bull; FR-2</span>
+              <h2 class="stage-title">Browser Security Header &amp; Directive Evaluator (10 Rules)</h2>
+              <p class="stage-desc">Parses existing CSP directives and evaluates the HTTP response against 10 weighted security rules covering XSS, Clickjacking, MIME sniffing, and DOM integrity.</p>
+            </div>
+            <div class="stage-header-actions">
+              <span id="stage2-status-badge" class="badge badge-neutral">IDLE</span>
+              <button type="button" id="run-stage2-btn" class="btn btn-secondary btn-sm">
+                Run Stage 2 (Analyze Headers)
+              </button>
+            </div>
+          </header>
+
+          <div class="stage-card-body">
+            <div class="kpi-row kpi-row-5">
+              <div class="mini-kpi">
+                <span class="mini-kpi-label">Rules Evaluated</span>
+                <strong id="s2-total-rules" class="mini-kpi-val">10</strong>
+              </div>
+              <div class="mini-kpi">
+                <span class="mini-kpi-label">Passed Rules</span>
+                <strong id="s2-passed-rules" class="mini-kpi-val text-emerald">0</strong>
+              </div>
+              <div class="mini-kpi">
+                <span class="mini-kpi-label">Failed Rules</span>
+                <strong id="s2-failed-rules" class="mini-kpi-val text-rose">0</strong>
+              </div>
+              <div class="mini-kpi">
+                <span class="mini-kpi-label">Critical / High Failures</span>
+                <strong id="s2-critical-high" class="mini-kpi-val text-amber">0</strong>
+              </div>
+              <div class="mini-kpi">
+                <span class="mini-kpi-label">Existing CSP Header</span>
+                <strong id="s2-existing-csp" class="mini-kpi-val code-text">None</strong>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Rule ID</th>
+                    <th>Rule Name &amp; Category</th>
+                    <th>Severity</th>
+                    <th>Verdict</th>
+                    <th>Weight</th>
+                    <th>Finding Evidence &amp; Reason</th>
+                    <th>Recommended Remediation</th>
+                  </tr>
+                </thead>
+                <tbody id="stage2-findings-tbody">
+                  <tr>
+                    <td colspan="7" class="empty-cell">Run Stage 2 to evaluate the 10 browser security header rules.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </article>
+
+        <!-- ===============================================================
+             STAGE 3 (FR-3): CSP BUILDER
+             =============================================================== -->
+        <article id="stage-card-3" class="stage-card card">
+          <header class="stage-card-header">
+            <div class="stage-title-group">
+              <span class="stage-tag">STAGE 3 &bull; FR-3</span>
+              <h2 class="stage-title">Least-Privilege Content-Security-Policy Synthesizer</h2>
+              <p class="stage-desc">Synthesizes a strict Content-Security-Policy and companion defense-in-depth headers using SHA-256 inline hashes, origin restriction, and framing controls.</p>
+            </div>
+            <div class="stage-header-actions">
+              <span id="stage3-status-badge" class="badge badge-neutral">IDLE</span>
+              <button type="button" id="run-stage3-btn" class="btn btn-primary btn-sm">
+                Recalculate Stage 3 &ndash; 6
+              </button>
+            </div>
+          </header>
+
+          <div class="stage-card-body">
+            <!-- Interactive CSP Builder Controls -->
+            <div class="builder-controls-panel">
+              <div class="builder-controls-grid">
+                <div class="form-group">
+                  <label for="csp-mode-select" class="form-label">CSP Synthesis Mode</label>
+                  <select id="csp-mode-select" class="form-select">
+                    <option value="strict-hash">strict-hash (Allow "'self'" + Safe SHA-256 Hashes)</option>
+                    <option value="strict-origin">strict-origin (Strict "'self'" Only &mdash; Block All Inline)</option>
+                    <option value="nonce">nonce (Cryptographic Per-Response Nonce Mode)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="csp-trusted-origins-input" class="form-label">Additional Approved Origins (Comma-Separated)</label>
+                  <input
+                    type="text"
+                    id="csp-trusted-origins-input"
+                    class="form-input code-input"
+                    placeholder="e.g. https://cdn.trusted.example"
+                  />
+                </div>
+
+                <div class="builder-toggles">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="csp-allow-hashes-toggle" checked />
+                    <span>Include SHA-256 Hashes for Safe Inline Scripts/Styles (<code>allowInlineHashes</code>)</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="csp-allow-framing-toggle" />
+                    <span>Allow Same-Origin Framing (<code>frame-ancestors 'self'</code> instead of <code>'none'</code>)</span>
+                  </label>
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="csp-include-report-toggle" checked />
+                    <span>Attach Telemetry Endpoint (<code>report-uri /api/engine/csp-report</code>)</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="two-col-grid mt-md">
+              <div>
+                <div class="section-header-inline">
+                  <h3 class="subsection-title">Synthesized Content-Security-Policy Header</h3>
+                  <button type="button" id="copy-csp-btn" class="btn btn-secondary btn-xs">Copy CSP</button>
+                </div>
+                <pre id="stage3-csp-output" class="code-block code-highlight">Run Stage 3 to synthesize a least-privilege Content-Security-Policy.</pre>
+
+                <h3 class="subsection-title mt-md">Directive Breakdown</h3>
+                <div id="stage3-directives-grid" class="directives-grid">
+                  <div class="empty-cell">No directives synthesized yet.</div>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="subsection-title">Recommended Companion Headers</h3>
+                <div class="table-responsive">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Header Name</th>
+                        <th>Recommended Value</th>
+                      </tr>
+                    </thead>
+                    <tbody id="stage3-companion-tbody">
+                      <tr>
+                        <td colspan="2" class="empty-cell">Companion headers will appear here.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3 class="subsection-title mt-md">Explainable Policy Builder Decisions</h3>
+                <div class="table-responsive">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Directive</th>
+                        <th>Synthesis Decision</th>
+                        <th>Supporting Evidence</th>
+                      </tr>
+                    </thead>
+                    <tbody id="stage3-decisions-tbody">
+                      <tr>
+                        <td colspan="3" class="empty-cell">Builder decisions will appear here.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ===============================================================
+             STAGE 4 (FR-4): VIOLATION-REPORT COLLECTOR & LIVE SANDBOX
+             =============================================================== -->
+        <article id="stage-card-4" class="stage-card card">
+          <header class="stage-card-header">
+            <div class="stage-title-group">
+              <span class="stage-tag">STAGE 4 &bull; FR-4</span>
+              <h2 class="stage-title">Violation-Report Collector &amp; Live Browser CSP Sandbox</h2>
+              <p class="stage-desc">Simulates policy enforcement against discovered DOM resources and collects real W3C browser SecurityPolicyViolationEvent reports via /api/engine/csp-report.</p>
+            </div>
+            <div class="stage-header-actions">
+              <span id="stage4-status-badge" class="badge badge-neutral">IDLE</span>
+              <button type="button" id="run-stage4-btn" class="btn btn-secondary btn-sm">
+                Run Stage 4 (Simulate)
+              </button>
+              <button type="button" id="launch-sandbox-btn" class="btn btn-accent btn-sm">
+                Launch Live Browser CSP Sandbox
+              </button>
+              <button type="button" id="refresh-violations-btn" class="btn btn-secondary btn-sm">
+                Refresh Stored Reports
+              </button>
+            </div>
+          </header>
+
+          <div class="stage-card-body">
+            <!-- Live Browser CSP Sandbox Iframe Panel -->
+            <div id="live-sandbox-container" class="sandbox-panel hidden">
+              <div class="sandbox-header">
+                <div>
+                  <strong>Live Browser W3C CSP Telemetry Sandbox (<code>/fixtures/sandbox-frame</code>)</strong>
+                  <p class="sandbox-subtext">
+                    This embedded frame delivers a real <code>Content-Security-Policy-Report-Only</code> header instructing your browser to fire violation reports to <code>POST /api/engine/csp-report</code>.
+                  </p>
+                </div>
+                <button type="button" id="close-sandbox-btn" class="btn btn-secondary btn-xs">
+                  Close Sandbox
+                </button>
+              </div>
+              <iframe
+                id="csp-sandbox-iframe"
+                class="sandbox-iframe"
+                title="Live Browser CSP Violation Sandbox"
+                src="about:blank"
+              ></iframe>
+            </div>
+
+            <div class="kpi-row kpi-row-3">
+              <div class="mini-kpi">
+                <span class="mini-kpi-label">Total Blocked Vectors</span>
+                <strong id="s4-total-violations" class="mini-kpi-val text-amber">0</strong>
+              </div>
+              <div class="mini-kpi">
+                <span class="mini-kpi-label">Simulated Policy Blocks</span>
+                <strong id="s4-sim-violations" class="mini-kpi-val">0</strong>
+              </div>
+              <div class="mini-kpi">
+                <span class="mini-kpi-label">Live Browser Telemetry Reports</span>
+                <strong id="s4-browser-violations" class="mini-kpi-val text-cyan">0</strong>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Source</th>
+                    <th>Violated Directive</th>
+                    <th>Effective Directive</th>
+                    <th>Blocked URI / Vector</th>
+                    <th>Disposition</th>
+                    <th>Code Sample</th>
+                    <th>Security Explanation</th>
+                  </tr>
+                </thead>
+                <tbody id="stage4-violations-tbody">
+                  <tr>
+                    <td colspan="7" class="empty-cell">Run Stage 4 or launch the Live Browser CSP Sandbox to inspect blocked attack vectors.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </article>
+
+        <!-- ===============================================================
+             STAGE 5 (FR-5): BEFORE / AFTER POSTURE SCORE
+             =============================================================== -->
+        <article id="stage-card-5" class="stage-card card">
+          <header class="stage-card-header">
+            <div class="stage-title-group">
+              <span class="stage-tag">STAGE 5 &bull; FR-5</span>
+              <h2 class="stage-title">Quantitative Before / After Security Posture Score</h2>
+              <p class="stage-desc">Compares baseline target security headers against the hardened policy bundle across all enabled rules and active vulnerability penalties.</p>
+            </div>
+            <div class="stage-header-actions">
+              <span id="stage5-status-badge" class="badge badge-neutral">IDLE</span>
+              <button type="button" id="run-stage5-btn" class="btn btn-secondary btn-sm">
+                Recalculate Stage 5 (Score)
+              </button>
+            </div>
+          </header>
+
+          <div class="stage-card-body">
+            <div class="score-comparison-grid">
+              <!-- BEFORE CARD -->
+              <div class="score-box score-box-before">
+                <div class="score-box-header">
+                  <span class="score-box-label">BASELINE POSTURE (BEFORE)</span>
+                  <span id="score-before-status" class="badge badge-danger">UNSCORED</span>
+                </div>
+                <div class="score-main-row">
+                  <div class="score-number-group">
+                    <span id="score-before-val" class="score-big-number">0</span>
+                    <span class="score-max">/ 100</span>
+                  </div>
+                  <div id="score-before-grade" class="grade-circle grade-f">F</div>
+                </div>
+                <div class="progress-track">
+                  <div id="score-before-bar" class="progress-fill progress-danger" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <!-- DELTA & THRESHOLD CENTER CARD -->
+              <div class="score-box score-box-delta">
+                <span class="score-box-label">POSTURE IMPROVEMENT DELTA</span>
+                <div id="score-delta-badge" class="delta-pill">+0 pts</div>
+                <div class="threshold-indicator">
+                  Pass Threshold: <strong id="score-threshold-label">75 / 100</strong>
+                </div>
+                <p id="score-explanation-text" class="score-explanation">
+                  Run the pipeline to calculate quantitative posture improvement.
+                </p>
+              </div>
+
+              <!-- AFTER CARD -->
+              <div class="score-box score-box-after">
+                <div class="score-box-header">
+                  <span class="score-box-label">HARDENED POSTURE (AFTER)</span>
+                  <span id="score-after-status" class="badge badge-success">UNSCORED</span>
+                </div>
+                <div class="score-main-row">
+                  <div class="score-number-group">
+                    <span id="score-after-val" class="score-big-number">0</span>
+                    <span class="score-max">/ 100</span>
+                  </div>
+                  <div id="score-after-grade" class="grade-circle grade-a">A</div>
+                </div>
+                <div class="progress-track">
+                  <div id="score-after-bar" class="progress-fill progress-success" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="subsection-title mt-md">Rule-by-Rule Before vs. After Score Breakdown</h3>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Rule ID</th>
+                    <th>Security Control</th>
+                    <th>Max Weight</th>
+                    <th>Before Verdict</th>
+                    <th>After Verdict</th>
+                    <th>Net Points Gained</th>
+                  </tr>
+                </thead>
+                <tbody id="stage5-breakdown-tbody">
+                  <tr>
+                    <td colspan="6" class="empty-cell">Score breakdown will populate after Stage 5 execution.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </article>
+
+        <!-- ===============================================================
+             STAGE 6 (FR-6): DOWNLOADABLE CONFIGURATION
+             =============================================================== -->
+        <article id="stage-card-6" class="stage-card card">
+          <header class="stage-card-header">
+            <div class="stage-title-group">
+              <span class="stage-tag">STAGE 6 &bull; FR-6</span>
+              <h2 class="stage-title">Downloadable Deployment Configuration &amp; Evidence Bundle</h2>
+              <p class="stage-desc">Exports deployment-ready Raw HTTP Response Header Blocks (.txt) and Sanitized JSON Evidence Reports (.json) with automatic credential/token redaction.</p>
+            </div>
+            <div class="stage-header-actions">
+              <span id="stage6-status-badge" class="badge badge-neutral">IDLE</span>
+              <button type="button" id="run-stage6-btn" class="btn btn-secondary btn-sm">
+                Regenerate Stage 6 Bundle
+              </button>
+            </div>
+          </header>
+
+          <div class="stage-card-body">
+            <div class="two-col-grid">
+              <!-- Format 1: Raw HTTP Response Header Block (.txt) -->
+              <div class="export-panel">
+                <div class="section-header-inline">
+                  <div>
+                    <h3 class="subsection-title">1. Raw HTTP Response Header Block (<code>.txt</code>)</h3>
+                    <p class="section-Note">Ready for reverse-proxy, Express, or gateway header injection.</p>
+                  </div>
+                  <div class="btn-group">
+                    <button type="button" id="copy-raw-headers-btn" class="btn btn-secondary btn-xs">
+                      Copy Headers
+                    </button>
+                    <button type="button" id="download-headers-btn" class="btn btn-primary btn-xs">
+                      Download .txt Headers
+                    </button>
+                  </div>
+                </div>
+                <pre id="stage6-raw-headers-output" class="code-block export-code-block">Run Stage 6 or Full Pipeline to generate the Raw HTTP Response Header Block.</pre>
+              </div>
+
+              <!-- Format 2: Sanitized JSON Evidence Report (.json) -->
+              <div class="export-panel">
+                <div class="section-header-inline">
+                  <div>
+                    <h3 class="subsection-title">2. Sanitized JSON Evidence Report (<code>.json</code>)</h3>
+                    <p class="section-Note">Scrubbed via <code>redactSensitiveData()</code> for reproducible audit verification.</p>
+                  </div>
+                  <div class="btn-group">
+                    <button type="button" id="copy-json-report-btn" class="btn btn-secondary btn-xs">
+                      Copy JSON
+                    </button>
+                    <button type="button" id="download-json-btn" class="btn btn-primary btn-xs">
+                      Download .json Report
+                    </button>
+                  </div>
+                </div>
+                <pre id="stage6-json-report-output" class="code-block export-code-block">Run Stage 6 or Full Pipeline to generate the Sanitized JSON Evidence Report.</pre>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         TAB 2: MANDATORY EVALUATION & METRICS SUITE (T1 – T6)
+         =================================================================== -->
+    <section id="panel-evaluation" class="tab-panel hidden" role="tabpanel" aria-labelledby="tab-btn-evaluation">
+      <div class="card">
+        <div class="panel-top-bar">
+          <div>
+            <span class="stage-tag">LAYER 5 &bull; AUTOMATED BENCHMARK</span>
+            <h2 class="stage-title">Mandatory Evaluation Suite (Baseline &amp; T1 &ndash; T6)</h2>
+            <p class="stage-desc">
+              Executes the complete security benchmark across normal baseline and adverse test cases (XSS, Inline Hashing, Third-Party Wildcard CSP, Clickjacking, MIME Sniffing, and SSRF Allowlist Rejection).
+            </p>
+          </div>
+          <button type="button" id="run-eval-suite-btn" class="btn btn-primary">
+            Run Mandatory Evaluation Suite (T1&ndash;T6)
+          </button>
+        </div>
+
+        <!-- Quantitative Metrics KPI Strip -->
+        <div class="kpi-row kpi-row-5 mt-md">
+          <div class="mini-kpi">
+            <span class="mini-kpi-label">Suite Pass Rate</span>
+            <strong id="eval-kpi-pass-rate" class="mini-kpi-val text-emerald">—</strong>
+          </div>
+          <div class="mini-kpi">
+            <span class="mini-kpi-label">Rule Coverage (%)</span>
+            <strong id="eval-kpi-coverage" class="mini-kpi-val text-cyan">—</strong>
+          </div>
+          <div class="mini-kpi">
+            <span class="mini-kpi-label">False Positive Rate (%)</span>
+            <strong id="eval-kpi-fpr" class="mini-kpi-val text-emerald">—</strong>
+          </div>
+          <div class="mini-kpi">
+            <span class="mini-kpi-label">False Negative Rate (%)</span>
+            <strong id="eval-kpi-fnr" class="mini-kpi-val text-emerald">—</strong>
+          </div>
+          <div class="mini-kpi">
+            <span class="mini-kpi-label">Mean Decision Latency</span>
+            <strong id="eval-kpi-latency" class="mini-kpi-val">—</strong>
+          </div>
+        </div>
+
+        <div class="table-responsive mt-md">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Test ID</th>
+                <th>Case Name &amp; Input Target</th>
+                <th>Expected Security Decision</th>
+                <th>Actual Result &amp; Score Change</th>
+                <th>Key Technical Evidence</th>
+                <th>Latency</th>
+                <th>Verdict</th>
+              </tr>
+            </thead>
+            <tbody id="eval-results-tbody">
+              <tr>
+                <td colspan="7" class="empty-cell">
+                  Click "Run Mandatory Evaluation Suite (T1–T6)" to execute all benchmark fixtures and compute live quantitative metrics.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         TAB 3: HISTORY & SIDE-BY-SIDE RUN COMPARISON
+         =================================================================== -->
+    <section id="panel-history" class="tab-panel hidden" role="tabpanel" aria-labelledby="tab-btn-history">
+      <!-- Filter & Comparison Control Card -->
+      <div class="card">
+        <div class="panel-top-bar">
+          <div>
+            <span class="stage-tag">SQLITE PERSISTENCE &bull; TRACEABILITY</span>
+            <h2 class="stage-title">Saved Workflow Run History &amp; Side-by-Side Policy Comparison</h2>
+            <p class="stage-desc">
+              Filter historical security runs persisted in SQLite, export artifacts, or compare any two runs side-by-side to trace how target fixes or admin rule changes impacted the final score.
+            </p>
+          </div>
+          <button type="button" id="refresh-history-btn" class="btn btn-secondary btn-sm">
+            Refresh Run History
+          </button>
+        </div>
+
+        <div class="history-filters-grid mt-md">
+          <div class="form-group">
+            <label for="history-status-filter" class="form-label">Filter by Run Status</label>
+            <select id="history-status-filter" class="form-select">
+              <option value="">All Statuses</option>
+              <option value="COMPLETED">COMPLETED</option>
+              <option value="REJECTED">REJECTED</option>
+              <option value="FAILED">FAILED</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="history-search-input" class="form-label">Search Target URL</label>
+            <input
+              type="text"
+              id="history-search-input"
+              class="form-input"
+              placeholder="Filter by fixture or URL substring (e.g. t1-xss)"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="compare-run-a-select" class="form-label">Comparison Run A (Baseline)</label>
+            <select id="compare-run-a-select" class="form-select">
+              <option value="">Select Run A...</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="compare-run-b-select" class="form-label">Comparison Run B (Updated)</label>
+            <select id="compare-run-b-select" class="form-select">
+              <option value="">Select Run B...</option>
+            </select>
+          </div>
+
+          <div class="control-actions">
+            <button type="button" id="compare-runs-btn" class="btn btn-primary">
+              Compare Selected Runs
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive mt-md">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Run ID</th>
+                <th>Timestamp</th>
+                <th>Operator</th>
+                <th>Target URL</th>
+                <th>Status</th>
+                <th>Before &rarr; After Score</th>
+                <th>Engine Ver.</th>
+                <th>Latency</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="history-runs-tbody">
+              <tr>
+                <td colspan="9" class="empty-cell">Loading saved workflow runs...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Side-by-Side Comparison Results Card -->
+      <div id="comparison-results-panel" class="card mt-lg hidden">
+        <div class="panel-top-bar">
+          <div>
+            <span class="stage-tag">DIFF ENGINE &bull; /API/REPORTS/COMPARE</span>
+            <h3 class="stage-title">Side-by-Side Workflow Run Comparison</h3>
+          </div>
+          <button type="button" id="close-comparison-btn" class="btn btn-secondary btn-xs">
+            Close Comparison
+          </button>
+        </div>
+
+        <div class="kpi-row kpi-row-4 mt-md">
+          <div class="mini-kpi">
+            <span class="mini-kpi-label">Run A (Before &rarr; After)</span>
+            <strong id="cmp-run-a-scores" class="mini-kpi-val">—</strong>
+          </div>
+          <div class="mini-kpi">
+            <span class="mini-kpi-label">Run B (Before &rarr; After)</span>
+            <strong id="cmp-run-b-scores" class="mini-kpi-val">—</strong>
+          </div>
+          <div class="mini-kpi">
+            <span class="mini-kpi-label">Hardened Score Diff (B &minus; A)</span>
+            <strong id="cmp-after-diff" class="mini-kpi-val text-cyan">—</strong>
+          </div>
+          <div class="mini-kpi">
+            <span class="mini-kpi-label">Pass Thresholds (A / B)</span>
+            <strong id="cmp-thresholds" class="mini-kpi-val">—</strong>
+          </div>
+        </div>
+
+        <div class="two-col-grid mt-md">
+          <div>
+            <h4 class="subsection-title">Run A Synthesized CSP (<code id="cmp-run-a-id">—</code>)</h4>
+            <pre id="cmp-csp-a" class="code-block">—</pre>
+          </div>
+          <div>
+            <h4 class="subsection-title">Run B Synthesized CSP (<code id="cmp-run-b-id">—</code>)</h4>
+            <pre id="cmp-csp-b" class="code-block">—</pre>
+          </div>
+        </div>
+
+        <h4 class="subsection-title mt-md">CSP Directive Differences</h4>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Directive</th>
+                <th>Run A Values</th>
+                <th>Run B Values</th>
+                <th>Diff Status</th>
+              </tr>
+            </thead>
+            <tbody id="compare-directives-tbody"></tbody>
+          </table>
+        </div>
+
+        <h4 class="subsection-title mt-md">Security Rule Verdict &amp; Weight Differences</h4>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Rule ID</th>
+                <th>Rule Name</th>
+                <th>Severity</th>
+                <th>Run A (Verdict / Weight)</th>
+                <th>Run B (Verdict / Weight)</th>
+                <th>Change</th>
+              </tr>
+            </thead>
+            <tbody id="compare-rules-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         TAB 4: ADMIN & AUDIT CONSOLE
+         =================================================================== -->
+    <section id="panel-admin" class="tab-panel hidden" role="tabpanel" aria-labelledby="tab-btn-admin">
+      <div id="admin-rbac-banner" class="alert alert-warning hidden">
+        <strong>Role Restriction Notice:</strong> You are currently signed in with a non-administrator role. Viewing or attempting to modify administrative configuration will enforce server-side RBAC checks (<code>403 ERR_AUTH_FORBIDDEN</code>) and record a <code>DENIED</code> event in the append-only audit log.
+      </div>
+
+      <!-- System Policy & Rule Configuration Editor -->
+      <div class="card">
+        <div class="panel-top-bar">
+          <div>
+            <span class="stage-tag">ADMINISTRATION &bull; /API/ADMIN/CONFIG</span>
+            <h2 class="stage-title">Security Engine Configuration, Allowlist &amp; Rule Weights</h2>
+            <p class="stage-desc">
+              Manage approved local crawl allowlist hosts, adjust the pass/fail posture score threshold, and enable/disable or re-weight the 10 browser security rules.
+            </p>
+          </div>
+          <div class="btn-group">
+            <button type="button" id="admin-reload-config-btn" class="btn btn-secondary btn-sm">
+              Reload Active Config
+            </button>
+            <button type="button" id="admin-reset-config-btn" class="btn btn-danger btn-sm">
+              Reset to Defaults
+            </button>
+            <button type="button" id="admin-save-config-btn" class="btn btn-primary btn-sm">
+              Save Configuration Changes
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-settings-grid mt-md">
+          <div class="form-group">
+            <label for="admin-allowlist-input" class="form-label">Approved Target Host Allowlist (Comma-Separated)</label>
+            <input
+              type="text"
+              id="admin-allowlist-input"
+              class="form-input code-input"
+              value="localhost, 127.0.0.1"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="admin-pass-threshold-input" class="form-label">Pass Score Threshold (0 &ndash; 100)</label>
+            <input
+              type="number"
+              id="admin-pass-threshold-input"
+              class="form-input"
+              min="1"
+              max="100"
+              value="75"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="admin-warning-threshold-input" class="form-label">Critical Warning Threshold (0 &ndash; 100)</label>
+            <input
+              type="number"
+              id="admin-warning-threshold-input"
+              class="form-input"
+              min="1"
+              max="100"
+              value="50"
+            />
+          </div>
+        </div>
+
+        <h3 class="subsection-title mt-md">10 Browser Security Header Rules (Toggle &amp; Weight Controls)</h3>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Enabled</th>
+                <th>Rule ID</th>
+                <th>Rule Name &amp; Description</th>
+                <th>Category</th>
+                <th>Severity</th>
+                <th>Rule Weight</th>
+              </tr>
+            </thead>
+            <tbody id="admin-rules-tbody">
+              <tr>
+                <td colspan="6" class="empty-cell">Loading security rule configuration...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Append-Only Audit Log Viewer -->
+      <div class="card mt-lg">
+        <div class="panel-top-bar">
+          <div>
+            <span class="stage-tag">IMMUTABLE TELEMETRY &bull; /API/AUDIT/LOGS</span>
+            <h2 class="stage-title">Append-Only Security Audit Log</h2>
+            <p class="stage-desc">
+              Tamper-evident chronological record of authentication events, RBAC denials, SSRF allowlist rejections, policy syntheses, and administrative changes.
+            </p>
+          </div>
+          <button type="button" id="refresh-audit-btn" class="btn btn-secondary btn-sm">
+            Refresh Audit Logs
+          </button>
+        </div>
+
+        <div class="audit-filters-grid mt-md">
+          <div class="form-group">
+            <label for="audit-outcome-filter" class="form-label">Filter by Outcome</label>
+            <select id="audit-outcome-filter" class="form-select">
+              <option value="">All Outcomes</option>
+              <option value="SUCCESS">SUCCESS</option>
+              <option value="DENIED">DENIED</option>
+              <option value="FAILURE">FAILURE</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="audit-action-filter" class="form-label">Filter by Action Code</label>
+            <input
+              type="text"
+              id="audit-action-filter"
+              class="form-input"
+              placeholder="e.g. AUTH_LOGIN, ADMIN_CONFIG_UPDATE, ENGINE_CRAWL"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="audit-actor-filter" class="form-label">Filter by Actor Username</label>
+            <input
+              type="text"
+              id="audit-actor-filter"
+              class="form-input"
+              placeholder="e.g. admin, operator, viewer"
+            />
+          </div>
+        </div>
+
+        <div class="table-responsive mt-md">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Timestamp (UTC)</th>
+                <th>Actor &amp; Role</th>
+                <th>Action</th>
+                <th>Resource</th>
+                <th>Outcome</th>
+                <th>IP Address</th>
+                <th>Sanitized Details</th>
+              </tr>
+            </thead>
+            <tbody id="audit-logs-tbody">
+              <tr>
+                <td colspan="8" class="empty-cell">Loading append-only audit log entries...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
