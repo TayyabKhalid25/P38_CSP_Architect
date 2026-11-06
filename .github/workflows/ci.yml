@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test & Evaluation (${{ matrix.os }} - Node ${{ matrix.node-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node-version: [22.x, 24.x]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Verify Code Syntax
+        run: |
+          node -c server.js
+          node -c src/app.js
+          node -c src/contracts/schemas.js
+          node -c src/db/database.js
+          node -c src/repositories/repo.js
+          node -c src/middleware/security.js
+          node -c src/routes/auth.js
+          node -c src/routes/admin.js
+          node -c src/routes/audit.js
+          node -c src/routes/engine.js
+          node -c src/routes/reports.js
+          node -c src/engine/index.js
+          node -c src/fixtures/fixturesRouter.js
+          node -c public/js/app.js
+          node -c scripts/run_evaluation.js
+
+      - name: Run Automated Test Suite (T1–T6 & T-final)
+        run: npm test
+
+      - name: Run CLI Evaluation Benchmark Suite
+        run: npm run eval

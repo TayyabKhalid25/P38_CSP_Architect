@@ -1,5 +1,7 @@
 # CSP Architect: Browser Security Header Workbench (Proposal 38)
 
+[![CI](https://github.com/TayyabKhalid25/P38_CSP_Architect/actions/workflows/ci.yml/badge.svg)](https://github.com/TayyabKhalid25/P38_CSP_Architect/actions/workflows/ci.yml)
+
 **Course / Group:** Class 3, Group 6 | **Domain:** Web Security  
 **Runtime:** Node.js `>= 22.5.0` + Express + Built-in `node:sqlite` + Vanilla Dark-Slate SPA
 

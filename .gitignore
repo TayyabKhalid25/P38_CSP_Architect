@@ -232,3 +232,6 @@ data/*.sqlite
 data/*.sqlite3
 *.sqlite
 *.sqlite3
+
+data/
+*.sqlite*
