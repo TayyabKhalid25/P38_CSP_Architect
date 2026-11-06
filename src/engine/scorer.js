@@ -90,18 +90,44 @@ function computePostureScore(analysis, crawlResult, isHardenedAfter, passThresho
     });
   }
 
-  // Penalty 3: Unmitigated MIME-sniffing script when nosniff is missing
+  // Penalty 3: Unmitigated Clickjacking surface when both frame-ancestors and X-Frame-Options are missing
+  if (!passedMap['HDR-CSP-FRAME-ANCESTORS'] && !passedMap['HDR-XFO-SAMEORIGIN']) {
+    const hasForms = Array.isArray(resources.forms) && resources.forms.length > 0;
+    const penalty = hasForms ? 15 : 10;
+    normalizedBaseScore -= penalty;
+    riskPenalties.push({
+      code: 'PENALTY-CLICKJACKING-EXPOSURE',
+      pointsDeducted: penalty,
+      reason: 'Interactive forms are exposed to cross-origin UI redressing (Clickjacking) with neither CSP frame-ancestors nor X-Frame-Options enforced.',
+    });
+  }
+
+  // Penalty 4: Unmitigated MIME-sniffing script or legacy plugin when nosniff/object-src is missing
   if (
     !passedMap['HDR-XCTO-NOSNIFF'] &&
     Array.isArray(resources.ambiguousScripts) &&
     resources.ambiguousScripts.length > 0
   ) {
-    const penalty = 5;
+    const penalty = 15;
     normalizedBaseScore -= penalty;
     riskPenalties.push({
       code: 'PENALTY-AMBIGUOUS-MIME-SCRIPT',
       pointsDeducted: penalty,
       reason: 'Target loads non-script file extension in <script src> without X-Content-Type-Options: nosniff.',
+    });
+  }
+
+  if (
+    !passedMap['HDR-CSP-OBJECT-SRC'] &&
+    Array.isArray(resources.objectsAndEmbeds) &&
+    resources.objectsAndEmbeds.length > 0
+  ) {
+    const penalty = 5;
+    normalizedBaseScore -= penalty;
+    riskPenalties.push({
+      code: 'PENALTY-UNRESTRICTED-PLUGIN-OBJECT',
+      pointsDeducted: penalty,
+      reason: "Target embeds <object>/<embed> plugin resource without object-src 'none'.",
     });
   }
 
