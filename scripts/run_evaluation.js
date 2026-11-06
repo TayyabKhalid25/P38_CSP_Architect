@@ -225,8 +225,10 @@ async function runCliEvaluation() {
       let outcome;
       try {
         const result = await engine.runFullPipeline(
-          item.input,
-          { mode: 'strict-hash', allowInlineHashes: true, allowFramingSelf: false },
+          {
+            targetUrl: item.input,
+            builderOptions: { mode: 'strict-hash', allowInlineHashes: true, allowFramingSelf: false },
+          },
           systemConfig
         );
         const latencyMs = Number(process.hrtime.bigint() - startNs) / 1e6;

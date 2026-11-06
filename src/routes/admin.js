@@ -146,7 +146,11 @@ function validateConfigUpdate(payload) {
  * GET /api/admin/config
  * Returns the active system configuration.
  */
-router.get('/config', requireAuth, (_req, res, next) => {
+router.get(
+  '/config',
+  requireAuth,
+  requireRole([ROLES.ADMIN, ROLES.OPERATOR]),
+  (_req, res, next) => {
   try {
     const config = repo.getSystemConfig();
     return res.status(200).json({
